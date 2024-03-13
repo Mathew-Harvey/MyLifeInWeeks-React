@@ -1,68 +1,78 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 const WeekGrid = ({ lifeEvents, birthDate }) => {
-  const gridRef = useRef(null);
+  console.log('WeekGrid rendering');
+  const totalYears = 90;
+  const weeksPerYear = 52;
 
-  useEffect(() => {
-    if (gridRef.current) {
-      const canvas = gridRef.current;
-      const ctx = canvas.getContext('2d');
+  // Calculate the number of weeks lived based on birthDate
+  const calculateWeeksLived = (birthDate) => {
+    if (!birthDate) return 0;
 
-      const gridWidth = canvas.width;
-      const gridHeight = canvas.height;
-      const boxSize = 20;
-      const padding = 10;
+    const currentDate = new Date();
+    const diffTime = Math.abs(currentDate - birthDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const weeksLived = Math.floor(diffDays / 7);
 
-      // Clear the canvas
-      ctx.clearRect(0, 0, gridWidth, gridHeight);
+    return weeksLived;
+  };
 
-      // Draw life events
-      lifeEvents.forEach((event) => {
-        const startWeek = Math.floor((event.start - birthDate) / (7 * 24 * 60 * 60 * 1000));
-        const endWeek = Math.floor((event.end - birthDate) / (7 * 24 * 60 * 60 * 1000));
+  // Calculate the current week number based on birthDate
+  const calculateCurrentWeek = (birthDate) => {
+    if (!birthDate) return 0;
 
-        ctx.fillStyle = event.color;
-        for (let week = startWeek; week < endWeek; week++) {
-          const x = (week % 52) * (boxSize + padding) + padding;
-          const y = Math.floor(week / 52) * (boxSize + padding) + padding;
-          ctx.fillRect(x, y, boxSize, boxSize);
-        }
-      });
+    const currentDate = new Date();
+    const diffTime = Math.abs(currentDate - birthDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const currentWeek = Math.floor(diffDays / 7);
 
-      // Draw grid lines
-      ctx.strokeStyle = '#ccc';
-      for (let x = padding; x < gridWidth; x += boxSize + padding) {
-        ctx.beginPath();
-        ctx.moveTo(x, padding);
-        ctx.lineTo(x, gridHeight - padding);
-        ctx.stroke();
+    return currentWeek;
+  };
+
+  // Log the birthDate and calculations for debugging
+  console.log('WeekGrid component: birthDate is', birthDate);
+  console.log('Weeks lived:', calculateWeeksLived(birthDate));
+  console.log('Current week:', calculateCurrentWeek(birthDate));
+
+  // Render week boxes based on the number of weeks lived and the current week
+  const renderWeekBoxes = () => {
+    const weekBoxes = [];
+    let weeksCounter = 0;
+
+    for (let year = 0; year < totalYears; year++) {
+      const yearWeeks = [];
+
+      for (let week = 0; week < weeksPerYear; week++) {
+        const isLived = weeksCounter < calculateWeeksLived(birthDate);
+        const isCurrentWeek = weeksCounter === calculateCurrentWeek(birthDate);
+
+        const weekBoxClass = `week-box ${isLived ? 'lived' : 'unlived'} ${isCurrentWeek ? 'current-week' : ''}`;
+        console.log(`Week ${weeksCounter}: Class - ${weekBoxClass}`); // Logging each week box's class for debugging
+
+        const weekBox = (
+          <div
+            key={`${year}-${week}`}
+            className={weekBoxClass}
+          ></div>
+        );
+
+        yearWeeks.push(weekBox);
+        weeksCounter++;
       }
 
-      for (let y = padding; y < gridHeight; y += boxSize + padding) {
-        ctx.beginPath();
-        ctx.moveTo(padding, y);
-        ctx.lineTo(gridWidth - padding, y);
-        ctx.stroke();
-      }
+      const yearContainer = (
+        <div key={year} className="year-container">
+          {yearWeeks}
+        </div>
+      );
 
-      // Draw labels
-      ctx.font = '12px Arial';
-      ctx.fillStyle = '#333';
-      for (let week = 0; week < 52; week++) {
-        const x = (week * (boxSize + padding) + padding + boxSize / 2) | 0;
-        const y = (padding / 2) | 0;
-        ctx.fillText(week % 4 === 0 ? week + 1 : '', x, y);
-      }
-
-      for (let year = 0; year < 90; year++) {
-        const x = (padding / 2) | 0;
-        const y = ((year * 52 + 26) * (boxSize + padding) + padding + boxSize / 2) | 0;
-        ctx.fillText(year, x, y);
-      }
+      weekBoxes.push(yearContainer);
     }
-  }, [lifeEvents, birthDate]);
 
-  return <canvas ref={gridRef} width={800} height={600} />;
+    return weekBoxes;
+  };
+
+  return <div className="week-grid">{renderWeekBoxes()}</div>;
 };
 
 export default WeekGrid;

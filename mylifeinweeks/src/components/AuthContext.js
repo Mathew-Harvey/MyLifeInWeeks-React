@@ -1,25 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import firebaseConfig from '../config/firebaseConfig';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-export const AuthContext = createContext({
-  currentUser: null,
-  loading: true,
-  signup: async () => {},
-  login: async () => {},
-  logout: async () => {},
-});
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -31,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    return unsubscribe; // This is effectively the cleanup function.
+    return unsubscribe;
   }, []);
 
   const signup = (email, password) => {
@@ -48,7 +36,6 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
-    loading,
     signup,
     login,
     logout,
@@ -56,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading ? children : <div>Loading...</div>} // Show loading indicator or simply nothing while loading
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

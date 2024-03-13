@@ -46,45 +46,71 @@ const LifeEventsManager = ({ lifeEvents, onLifeEventsChange, birthDate, onBirthD
   return (
     <div>
       <h3>Life Events</h3>
-      <div>
-        <input
-          type="text"
-          placeholder="Event Name"
-          value={newEventName}
-          onChange={(e) => setNewEventName(e.target.value)}
-        />
-        <input
-          type="date"
-          value={newEventStart}
-          onChange={(e) => setNewEventStart(e.target.value)}
-        />
-        <input
-          type="date"
-          value={newEventEnd}
-          onChange={(e) => setNewEventEnd(e.target.value)}
-        />
-        <input
-          type="color"
-          value={newEventColor}
-          onChange={(e) => setNewEventColor(e.target.value)}
-        />
-        <button onClick={handleAddEvent}>Add Event</button>
+      <div className="event-group">
+        <div className="event-name-and-color">
+          <input
+            type="text"
+            placeholder="Event Name"
+            value={newEventName}
+            onChange={(e) => setNewEventName(e.target.value)}
+          />
+          <input
+            type="color"
+            value={newEventColor}
+            onChange={(e) => setNewEventColor(e.target.value)}
+          />
+        </div>
+        <div className="date-picker-container">
+          <input
+            type="date"
+            className="date-picker"
+            value={newEventStart}
+            onChange={(e) => setNewEventStart(e.target.value)}
+          />
+          <input
+            type="date"
+            className="date-picker"
+            value={newEventEnd}
+            onChange={(e) => setNewEventEnd(e.target.value)}
+          />
+        </div>
+        <button className="submit-event" onClick={handleAddEvent}>
+          Add Event
+        </button>
       </div>
-      <ul>
+      <div className="event-list">
         {lifeEvents.map((event, index) => (
-          <li key={index}>
-            <span>{event.name}</span>
-            <span>{format(event.start, 'yyyy-MM-dd')}</span>
-            <span>{format(event.end, 'yyyy-MM-dd')}</span>
-            <span style={{ backgroundColor: event.color }}>&#9632;</span>
-            <button onClick={() => handleRemoveEvent(index)}>Remove</button>
-          </li>
+          <div key={index} className="event-group">
+            <div className="event-name-and-color">
+              <input type="text" value={event.name} readOnly />
+              <input type="color" value={event.color} readOnly />
+            </div>
+            <div className="date-picker-container">
+              <input
+                type="date"
+                className="date-picker"
+                value={format(event.start, 'yyyy-MM-dd')}
+                readOnly
+              />
+              <input
+                type="date"
+                className="date-picker"
+                value={format(event.end, 'yyyy-MM-dd')}
+                readOnly
+              />
+            </div>
+            <button className="remove-event" onClick={() => handleRemoveEvent(index)}>
+              Remove
+            </button>
+          </div>
         ))}
-      </ul>
-      <div>
-        <label>Birth Date:</label>
+      </div>
+      <div className="birthdate-section">
+        <label htmlFor="birthdate">Birth Date:</label>
         <input
+          id="birthdate"
           type="date"
+          className="date-picker"
           value={birthDate ? format(birthDate, 'yyyy-MM-dd') : ''}
           onChange={handleBirthDateChange}
         />

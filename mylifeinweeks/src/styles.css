@@ -624,7 +624,6 @@ p {
 }
 
 #main-content {
-    padding-top: 13rem !important;
     width: 100%;
     max-width: 1200px;
     display: flex;

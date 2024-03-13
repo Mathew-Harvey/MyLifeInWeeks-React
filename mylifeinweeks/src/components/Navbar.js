@@ -6,20 +6,15 @@ const Navbar = () => {
   const { currentUser, logout } = useContext(AuthContext);
 
   return (
-    <nav>
-      <div>
+    <nav id="navbar">
+      <div id="logo">
         <Link to="/">My Life in Weeks</Link>
       </div>
-      <div>
-        {currentUser ? (
+      <div id="user-info">
+        {currentUser && (
           <>
-            <span>{currentUser.email}</span>
+            <span id="user-name">{currentUser.email}</span>
             <button onClick={logout}>Logout</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
           </>
         )}
       </div>
